@@ -1,0 +1,28 @@
+@startuml
+
+[CDN Analyser] as cdnanalyser
+[S3 Bucket (logs)] as logs
+[S3 Bucket (CDN Files)] as cdnfiles
+[MongoDB] as mongodb
+
+logs --> cdnanalyser
+cdnanalyser --> mongodb
+cdnfiles --> cdnanalyser
+
+
+note top of logs
+    s3://development-eu-west-2-s3-access-logs.ch.gov.uk/
+      169942020521/eu-west-2/chs-cdn.development.ch.gov.uk/
+end note
+
+note top of cdnfiles
+    s3://chs-cdn.development.ch.gov.uk/cidev/
+end note
+
+note left of cdnanalyser
+    The analyser will parse the S3 bucket for GET requests
+    and produce a report saving it into a Mongo database
+    keeping a count of which assets have been accessed
+end note
+
+@enduml

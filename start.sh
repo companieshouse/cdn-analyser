@@ -27,4 +27,4 @@ else
 
 fi
 
-exec java ${JAVA_MEM_ARGS} -jar ${PROXY_ARGS} -Dserver.port="${PORT}" -Dspring.data.mongodb.uri="$MONGODB_URL" "${APP_DIR}/cdn-analyser.jar"
+exec java ${JAVA_MEM_ARGS} -jar "${APP_DIR}/cdn-analyser.jar"
