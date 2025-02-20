@@ -17,19 +17,19 @@ In order to run this App locally you will need to install:
 ## Configuration
 
 #### Local Configuration
-|                   Key                    |              Example                  |              Notes              |
-|------------------------------------------|---------------------------------------|---------------------------------|
-| aws.endpoint                             | http://localstack-main:4566           | Required for local dev use only |
-| aws.region                               | eu-west-2                             |                                 |
-| aws.access.key.id                        | test                                  |                                 |
-| aws.secret.access.key                    | test                                  |                                 |
-| aws.s3.path-style-access                 | true                                  | Required for local dev use only |
-| cdn.access.logs.bucket                   | cdn-access-logs                       |                                 |
-| cdn.access.logs.filterinpath             | cidev                                 |                                 |
-| cdn.access.logs.processlogsfromtodayonly | TRUE                                  |                                 |
-| cdn.assets.bucket                        | cdn-assets                            |                                 |
-| cdn.assets.filterinpath                  | cidev                                 |                                 |
-| cdn.analysis.data.retention              | 365                                   |                                 |
+|                   Key                    |           Example           |                        Notes                        |
+|------------------------------------------|-----------------------------|-----------------------------------------------------|
+| aws.endpoint                             | http://localstack-main:4566 | localstack-main is the name of the docker container |
+| aws.region                               | eu-west-2                   |                                                     |
+| aws.access.key.id                        | test                        |                                                     |
+| aws.secret.access.key                    | test                        |                                                     |
+| aws.s3.path-style-access                 | true                        | Required for local dev use only                     |
+| cdn.access.logs.bucket                   | cdn-access-logs             |                                                     |
+| cdn.access.logs.filterinpath             | cidev                       |                                                     |
+| cdn.access.logs.processlogsfromtodayonly | TRUE                        |                                                     |
+| cdn.assets.bucket                        | cdn-assets                  |                                                     |
+| cdn.assets.filterinpath                  | cidev                       |                                                     |
+| cdn.analysis.data.retention              | 365                         |                                                     |
 
 
 ## Terraform deployment
