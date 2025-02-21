@@ -11,48 +11,63 @@ const octokit = new Octokit({
 });
 
 const ACCEPT_HEADER = 'application/vnd.github.v3.text-match+json';
+const RATE_LIMIT_WAIT_TIME = 60000; // 1 minute
 
 let rateLimitResetTime = null;
 
+/**
+ * Waits for the rate limit to reset if necessary.
+ */
 const waitForRateLimitReset = async () => {
     if (rateLimitResetTime && new Date() < rateLimitResetTime) {
-        const now = new Date();
-        const waitTime = rateLimitResetTime - now;
+        const waitTime = rateLimitResetTime - new Date();
         console.log(`Rate limit exceeded. Waiting for ${waitTime / 1000} seconds.`);
         await new Promise(resolve => setTimeout(resolve, waitTime));
-        try {
-            const { data: { resources: { core } } } = await octokit.rest.rateLimit.get();
-            if (core.remaining === 0) {
-                rateLimitResetTime = new Date(core.reset * 1000);
-                const waitTime = rateLimitResetTime - new Date();
-                console.log(`Rate limit exceeded. Waiting for ${waitTime / 1000} seconds.`);
-                await new Promise(resolve => setTimeout(resolve, waitTime));
-            } else {
-                rateLimitResetTime = null;
-            }
-        } catch (error) {
-            console.error('Error fetching rate limit:', error);
-            rateLimitResetTime = new Date(Date.now() + 60000); // Wait for 1 minute before retrying
+    }
+
+    try {
+        const { data: { resources: { core } } } = await octokit.rest.rateLimit.get();
+        if (core.remaining === 0) {
+            rateLimitResetTime = new Date(core.reset * 1000);
             const waitTime = rateLimitResetTime - new Date();
-            console.log(`Waiting for ${waitTime / 1000} seconds before retrying.`);
+            console.log(`Rate limit exceeded. Waiting for ${waitTime / 1000} seconds.`);
             await new Promise(resolve => setTimeout(resolve, waitTime));
-        }
+        } else {
             rateLimitResetTime = null;
+        }
+    } catch (error) {
+        console.error('Error fetching rate limit:', error);
+        rateLimitResetTime = new Date(Date.now() + RATE_LIMIT_WAIT_TIME);
+        const waitTime = rateLimitResetTime - new Date();
+        console.log(`Waiting for ${waitTime / 1000} seconds before retrying.`);
+        await new Promise(resolve => setTimeout(resolve, waitTime));
     }
 };
 
-const escapeMap = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;',
-};
-
+/**
+ * Escapes HTML characters in a string.
+ *
+ * @param {string} unsafe - The string to escape.
+ * @returns {string} - The escaped string.
+ */
 const escapeHtml = (unsafe) => {
+    const escapeMap = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;',
+    };
     return unsafe.replace(/[&<>"']/g, (match) => escapeMap[match]);
 };
 
+/**
+ * Searches for code in the GitHub repository.
+ *
+ * @param {string} cdnString - The CDN string to search for.
+ * @param {number} page - The page number to fetch.
+ * @returns {Promise<Object>} - The search results.
+ */
 const searchCode = async (cdnString, page) => {
     await waitForRateLimitReset();
     return octokit.rest.search.code({
@@ -65,6 +80,14 @@ const searchCode = async (cdnString, page) => {
     });
 };
 
+/**
+ * Retrieves the content of a file from a GitHub repository.
+ *
+ * @param {string} owner - The owner of the repository.
+ * @param {string} repo - The name of the repository.
+ * @param {string} path - The path to the file.
+ * @returns {Promise<string>} - The file content.
+ */
 const getContent = async (owner, repo, path) => {
     await waitForRateLimitReset();
     const response = await octokit.rest.repos.getContent({
@@ -90,10 +113,8 @@ const getContent = async (owner, repo, path) => {
 const processLines = (lines, pattern, repo, path) => {
     const assets = [];
     lines.forEach((line, index) => {
-        // Trim the line and check if it matches the pattern
         const match = line.trim().match(pattern);
         if (match) {
-            // If a match is found, add the asset details to the assets array
             assets.push({
                 repository: repo,
                 filepath: path,
@@ -106,6 +127,12 @@ const processLines = (lines, pattern, repo, path) => {
     return assets;
 };
 
+/**
+ * Retrieves all search results for a given CDN string.
+ *
+ * @param {string} cdnString - The CDN string to search for.
+ * @returns {Promise<Object[]>} - An array of search results.
+ */
 const getAllResults = async (cdnString) => {
     await waitForRateLimitReset();
     const firstResponse = await searchCode(cdnString, 1);
@@ -128,16 +155,22 @@ const getAllResults = async (cdnString) => {
     return allResults;
 };
 
+/**
+ * Processes the records to identify assets based on the provided pattern.
+ *
+ * @param {Object[]} records - The records to process.
+ * @param {RegExp} pattern - The regex pattern to match against each line.
+ * @param {Set} fileChecklist - A set to keep track of processed files.
+ * @returns {Promise<Object[]>} - An array of identified assets with details.
+ */
 const processRecords = async (records, pattern, fileChecklist) => {
     const identifiedAssets = [];
 
-    await waitForRateLimitReset();
     const contentPromises = records.map(async (record) => {
         const { owner: { login: owner }, name: repo } = record.repository;
         const { path } = record;
 
         if (!fileChecklist.has(`${repo}/${path}`)) {
-            await waitForRateLimitReset();
             const content = await getContent(owner, repo, path);
             const lines = content.split('\n');
             const assets = processLines(lines, pattern, repo, path);
@@ -157,26 +190,21 @@ const processRecords = async (records, pattern, fileChecklist) => {
  * @returns {Promise<Object[]>} - A promise that resolves to an array of identified assets with details.
  */
 const getFilesFromAssetFolders = async (searchStrings) => {
-    // Regex pattern to match script tags with a src attribute ending in .js
-    // The pattern captures the asset name (JavaScript file name) from the src attribute
     const pattern = /<script\s+[^>]*src=["'][^"']*\/([^"']+\.js)["\']/i;
     const fileChecklist = new Set();
     const allResultsPromises = searchStrings.map(cdnString => getAllResults(cdnString));
     const allResultsArrays = await Promise.all(allResultsPromises);
 
     const allResults = allResultsArrays.flat();
+    return processRecords(allResults, pattern, fileChecklist);
+};
+
 /**
  * Converts an array of asset data into a markdown table format.
  *
  * @param {Object[]} data - The array of asset data to convert.
  * @returns {string} - The markdown table as a string.
  */
-const convertToMarkdownTable = (data) => {
-
-    console.log(identifiedAssets.length);
-    return identifiedAssets;
-};
-
 const convertToMarkdownTable = (data) => {
     const headers = ['Repository', 'File Path', 'Line Number', 'Line', 'Asset Name'];
     const headerRow = `| ${headers.join(' | ')} |`;
