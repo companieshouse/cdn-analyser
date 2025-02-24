@@ -1,18 +1,17 @@
 package uk.gov.companieshouse.cdnanalyser.service.interfaces;
 
 import java.util.List;
+import java.util.Set;
 
 import uk.gov.companieshouse.cdnanalyser.models.AssetAccessLog;
 import uk.gov.companieshouse.cdnanalyser.models.AssetUsageReport;
 
 public interface AnalysisOutputInterface {
 
-    public void saveFailedAssetsRequests(List<AssetAccessLog> assetAccessLogsWithErrors);
+    void saveFailedAssetsRequests(List<AssetAccessLog> assetAccessLogsWithErrors);
 
-    public void saveRawData(List<AssetAccessLog> assetAccessLogs);
+    void saveRawData(Set<AssetAccessLog> assetAccessLogs);
 
-    public void saveSuccessfulAssetRequestsTotals(AssetUsageReport assetUsageReportTotals);
-
-    public void saveSuccessfulAssetRequestsTotalsForPeriod(AssetUsageReport assetUsageReportTotals);
+    void saveSuccessfulAssetRequests(AssetUsageReport assetUsageReportTotals);
 
 }

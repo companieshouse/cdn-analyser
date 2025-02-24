@@ -1,7 +1,6 @@
 package uk.gov.companieshouse.cdnanalyser.models;
 
 import java.time.Instant;
-import java.util.List;
 
 public class S3File {
 
@@ -9,7 +8,7 @@ public class S3File {
 
     private Instant modifiedDate;
 
-    private List<String> content;
+    private String content = "";
 
     public S3File(String filename, Instant modifiedDate) {
         this.filename = filename;
@@ -24,11 +23,11 @@ public class S3File {
         return modifiedDate;
     }
 
-    public List<String> getContent() {
+    public String getContent() {
         return content;
     }
 
-    public void setContent(List<String> content) {
+    public void setContent(String content) {
         this.content = content;
     }
 

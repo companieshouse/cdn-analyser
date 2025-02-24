@@ -1,41 +1,44 @@
 package uk.gov.companieshouse.cdnanalyser.configuration;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.env.Environment;
 
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 
-@ExtendWith(MockitoExtension.class)
+@TestConfiguration
 public class S3ClientConfigTest {
 
-    @InjectMocks
-    private S3ClientConfig s3ClientConfig;
 
-    @BeforeEach
-    public void setUp() {
-        ReflectionTestUtils.setField(s3ClientConfig, "s3endpoint", "http://localhost:4566");
-        ReflectionTestUtils.setField(s3ClientConfig, "region", "us-west-2");
-        ReflectionTestUtils.setField(s3ClientConfig, "accessKey", "test");
-        ReflectionTestUtils.setField(s3ClientConfig, "secretKey", "test");
+        private final Environment env;
+
+    public S3ClientConfigTest(Environment env) {
+        this.env = env;
     }
 
-    @Test
-    public void testS3Client() {
-        S3Client s3Client = s3ClientConfig.s3Client();
-        assertNotNull(s3Client);
+    @Primary
+    @Bean("localstack.s3.client")
+    public S3Client s3Client() throws URISyntaxException {
+        return S3Client.builder()
+                .endpointOverride(new URI(Optional.ofNullable(env.getProperty("spring.cloud.aws.s3.endpoint"))
+                        .orElseThrow(() ->new IllegalArgumentException("Missing S3 endpoint"))))
+                .region(Region.EU_WEST_2)
+                .credentialsProvider(getCredentialsProvider())
+                .forcePathStyle(true)
+                .build();
     }
 
-    @Test
-    public void testS3ClientWithDefaultCredentials() {
-        ReflectionTestUtils.setField(s3ClientConfig, "accessKey", "default");
-        ReflectionTestUtils.setField(s3ClientConfig, "pathStyleAccess", true);
-        S3Client s3Client = s3ClientConfig.s3Client();
-        assertNotNull(s3Client);
+    private StaticCredentialsProvider getCredentialsProvider() {
+        return StaticCredentialsProvider.create(AwsBasicCredentials.create(
+                "test",
+                "test"));
     }
 }

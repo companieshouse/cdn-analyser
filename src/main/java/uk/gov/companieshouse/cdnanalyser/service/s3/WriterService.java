@@ -3,9 +3,8 @@ package uk.gov.companieshouse.cdnanalyser.service.s3;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -33,7 +32,11 @@ import uk.gov.companieshouse.cdnanalyser.service.interfaces.AnalysisOutputInterf
 
     private final String cdnAnalysisBucket;
 
-    private static final Logger logger = LoggerFactory.getLogger("cdnAnalyser");
+    private static final Logger logger = LoggerFactory.getLogger(Constants.APPLICATION_NAME_SPACE);
+
+    private final ObjectMapper objectMapper = new ObjectMapper()
+                                                        .registerModule(new JavaTimeModule())
+                                                        .enable(SerializationFeature.INDENT_OUTPUT);
 
     public WriterService(S3Client s3Client, @Value("${cdn.analysis.bucket}") String cdnAnalysisBucket) {
         this.s3Client = s3Client;
@@ -43,17 +46,10 @@ import uk.gov.companieshouse.cdnanalyser.service.interfaces.AnalysisOutputInterf
     @Override
     public void saveFailedAssetsRequests(List<AssetAccessLog> assetAccessLogsWithErrors) {
 
-        String startDate = LocalDate.ofInstant(assetAccessLogsWithErrors.get(0).getTimestamp(), Constants.LONDON_ZONE_ID).toString() ;
-        String endDate = LocalDate.ofInstant(assetAccessLogsWithErrors.get(assetAccessLogsWithErrors.size() - 1).getTimestamp(), Constants.LONDON_ZONE_ID).toString();
-
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
             .bucket(cdnAnalysisBucket)
-            .key("failed-asset-requests__" + startDate + "__" +endDate + ".json")
+            .key("failed-asset-requests.json")
             .build();
-
-        ObjectMapper objectMapper = new ObjectMapper()
-        .registerModule(new JavaTimeModule())
-        .enable(SerializationFeature.INDENT_OUTPUT);
 
         String failedAssetRequests = assetAccessLogsWithErrors.stream()
             .map(assetAccessLog -> {
@@ -67,84 +63,41 @@ import uk.gov.companieshouse.cdnanalyser.service.interfaces.AnalysisOutputInterf
             .filter(json -> json != null)
             .collect(Collectors.joining("\n"));
 
-
         if (! failedAssetRequests.isEmpty()) {
             s3Client.putObject(putObjectRequest,RequestBody.fromByteBuffer(ByteBuffer.wrap(failedAssetRequests.getBytes(StandardCharsets.UTF_8))));
          } else {
-            logger.error("Failed to save raw data to S3 bucket as assetRequests is empty");
+            logger.debug("Failed to save raw data to S3 bucket as assetRequests is empty");
          }
     }
 
     @Override
-    public void saveRawData(List<AssetAccessLog> assetAccessLogs) {
-        String startDate = LocalDate.ofInstant(assetAccessLogs.get(0).getTimestamp(), Constants.LONDON_ZONE_ID).toString() ;
-        String endDate = LocalDate.ofInstant(assetAccessLogs.get(assetAccessLogs.size() - 1).getTimestamp(), Constants.LONDON_ZONE_ID).toString();
-
+    public void saveRawData(Set<AssetAccessLog> assetAccessLogs) {
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
             .bucket(cdnAnalysisBucket)
-            .key("raw-asset-access-data__" + startDate + "__" + endDate + ".json")
+            .key("raw-asset-access-data.json")
             .build();
 
-        ObjectMapper objectMapper = new ObjectMapper()
-        .registerModule(new JavaTimeModule())
-        .enable(SerializationFeature.INDENT_OUTPUT);
-
-        String assetRequests = assetAccessLogs.stream()
-            .map(assetAccessLog -> {
-                try {
-                    return objectMapper.writeValueAsString(assetAccessLog);
-                } catch (Exception e) {
-                    logger.error("Failed to convert assetAccessLog to JSON {}", e.getMessage());
-                    return null;
-                }
-            })
-            .filter(json -> json != null)
-            .collect(Collectors.joining("\n"));
-        if (! assetRequests.isEmpty()) {
+        String assetRequests;
+        try {
+            assetRequests = objectMapper.writeValueAsString(assetAccessLogs);
             s3Client.putObject(putObjectRequest,RequestBody.fromByteBuffer(ByteBuffer.wrap(assetRequests.getBytes(StandardCharsets.UTF_8))));
-         } else {
-            logger.error("Failed to save raw data to S3 bucket as assetRequests is empty");
-         }
+        } catch (JsonProcessingException e) {
+            logger.error("Error has occurred while converting assetAccessLogs to JSON: {}", e.getMessage());
+        }
+
     }
 
-
     @Override
-    public void saveSuccessfulAssetRequestsTotals(AssetUsageReport assetUsageReportTotals) {
+    public void saveSuccessfulAssetRequests(AssetUsageReport assetUsageReportTotals) {
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-        .bucket(cdnAnalysisBucket)
-        .key("asset-usage-report-total.json")
-        .build();
-
-        ObjectMapper objectMapper = new ObjectMapper()
-        .registerModule(new JavaTimeModule())
-        .enable(SerializationFeature.INDENT_OUTPUT);
+                                                            .bucket(cdnAnalysisBucket)
+                                                            .key("successful-asset-requests.json")
+                                                            .build();
 
         String json;
         try {
             json = objectMapper.writeValueAsString(assetUsageReportTotals);
-            s3Client.putObject(putObjectRequest,RequestBody.fromByteBuffer(ByteBuffer.wrap(json.getBytes(StandardCharsets.UTF_8))));
-        } catch (JsonProcessingException e) {
-            logger.error("Failed to save asset usage total report S3 bucket {}", e.getMessage());
-        }
-    }
-
-    @Override
-    public void saveSuccessfulAssetRequestsTotalsForPeriod(AssetUsageReport assetUsageReportTotal) {
-        String today = LocalDate.ofInstant(Instant.now(), Constants.LONDON_ZONE_ID).toString() ;
-
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-        .bucket(cdnAnalysisBucket)
-        .key("asset-usage-report-total"+ "-" + today + ".json")
-        .build();
-
-        ObjectMapper objectMapper = new ObjectMapper()
-        .registerModule(new JavaTimeModule())
-        .enable(SerializationFeature.INDENT_OUTPUT);
-
-        String json;
-        try {
-            json = objectMapper.writeValueAsString(assetUsageReportTotal);
             s3Client.putObject(putObjectRequest,RequestBody.fromByteBuffer(ByteBuffer.wrap(json.getBytes(StandardCharsets.UTF_8))));
         } catch (JsonProcessingException e) {
             logger.error("Failed to save asset usage total report S3 bucket {}", e.getMessage());

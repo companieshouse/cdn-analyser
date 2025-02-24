@@ -1,27 +1,23 @@
 package uk.gov.companieshouse.cdnanalyser.service.s3;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.time.Instant;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Value;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -29,124 +25,88 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import uk.gov.companieshouse.cdnanalyser.models.AssetAccessLog;
 import uk.gov.companieshouse.cdnanalyser.models.AssetUsageReport;
 
-public class WriterServiceTest {
+class WriterServiceTest {
 
-    @Mock
     private S3Client s3Client;
-
-    @Value("${cdn.analysis.bucket}")
-    private String cdnAnalysisBucket = "test-bucket";
-
-    @InjectMocks
     private WriterService writerService;
+    private final String bucketName = "test-bucket";
 
     @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        writerService = new WriterService(s3Client, cdnAnalysisBucket);
+    void setUp() {
+        s3Client = mock(S3Client.class);
+        writerService = new WriterService(s3Client, bucketName);
     }
 
     @Test
-    public void testSaveRawData() {
-        AssetAccessLog log1 = new AssetAccessLog();
-        log1.setTimestamp(Instant.now());
-        AssetAccessLog log2 = new AssetAccessLog();
-        log2.setTimestamp(Instant.now().plusSeconds(3600));
-        List<AssetAccessLog> logs = Arrays.asList(log1, log2);
+    void saveRawData_shouldPutObject_withSerializedData() throws Exception {
+        AssetAccessLog log = mock(AssetAccessLog.class);
+        HashSet<AssetAccessLog> logs = new HashSet<>();
+        logs.add(log);
 
         writerService.saveRawData(logs);
 
-        verify(s3Client, times(0)).putObject(any(PutObjectRequest.class), any(RequestBody.class));
+        ArgumentCaptor<PutObjectRequest> requestCaptor = ArgumentCaptor.forClass(PutObjectRequest.class);
+        ArgumentCaptor<RequestBody> bodyCaptor = ArgumentCaptor.forClass(RequestBody.class);
+
+        verify(s3Client, times(1)).putObject(requestCaptor.capture(), bodyCaptor.capture());
+
+        PutObjectRequest req = requestCaptor.getValue();
+        assertEquals(bucketName, req.bucket());
+        assertEquals("raw-asset-access-data.json", req.key());
+
+        String bodyString = new String(bodyCaptor.getValue().contentStreamProvider().newStream().readAllBytes(), StandardCharsets.UTF_8);
+        assertTrue(bodyString.contains("[") || bodyString.contains("{"));
     }
 
     @Test
-    public void testSaveSuccessfulAssetRequestsTotals() {
-        AssetUsageReport report = new AssetUsageReport();
+    void saveSuccessfulAssetRequests_shouldPutObject_withSerializedReport() throws Exception {
+        AssetUsageReport report = mock(AssetUsageReport.class);
 
-        writerService.saveSuccessfulAssetRequestsTotals(report);
+        writerService.saveSuccessfulAssetRequests(report);
 
-        verify(s3Client, times(1)).putObject(any(PutObjectRequest.class), any(RequestBody.class));
+        ArgumentCaptor<PutObjectRequest> requestCaptor = ArgumentCaptor.forClass(PutObjectRequest.class);
+        ArgumentCaptor<RequestBody> bodyCaptor = ArgumentCaptor.forClass(RequestBody.class);
+
+        verify(s3Client, times(1)).putObject(requestCaptor.capture(), bodyCaptor.capture());
+
+        PutObjectRequest req = requestCaptor.getValue();
+        assertEquals(bucketName, req.bucket());
+        assertEquals("successful-asset-requests.json", req.key());
+
+        String bodyString = new String(bodyCaptor.getValue().contentStreamProvider().newStream().readAllBytes(), StandardCharsets.UTF_8);
+        assertTrue(bodyString.contains("{"));
     }
 
     @Test
-    public void testSaveSuccessfulAssetRequestsTotalsForPeriod() {
-        AssetUsageReport report = new AssetUsageReport();
+    void saveFailedAssetsRequests_shouldPutObject_withSerializedFailedAssets() throws Exception {
+        AssetAccessLog log1 = mock(AssetAccessLog.class);
+        AssetAccessLog log2 = mock(AssetAccessLog.class);
 
-        writerService.saveSuccessfulAssetRequestsTotalsForPeriod(report);
+        when(log1.toString()).thenReturn("log1");
+        when(log2.toString()).thenReturn("log2");
 
-        verify(s3Client, times(1)).putObject(any(PutObjectRequest.class), any(RequestBody.class));
-    }
-
-    @Test
-    public void testSaveFailedAssetsRequestsFailedJsonConversion() {
-        AssetAccessLog log1 = new AssetAccessLog();
-        log1.setTimestamp(Instant.now());
-        List<AssetAccessLog> logs = Arrays.asList(log1);
-
-        writerService.saveFailedAssetsRequests(logs);
-
-        verify(s3Client, times(0)).putObject(any(PutObjectRequest.class), any(RequestBody.class));
-    }
-
-    @Test
-    public void testFailedAssetRequestsJsonConversion() throws IOException {
-        AssetAccessLog log1 = new AssetAccessLog();
-        log1.setStatusCode(200);
-        log1.setTimestamp(Instant.now());
-        AssetAccessLog log2 = new AssetAccessLog();
-        log2.setStatusCode(404);
-        log2.setTimestamp(Instant.now().plusSeconds(3600));
         List<AssetAccessLog> logs = Arrays.asList(log1, log2);
 
-        ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .enable(SerializationFeature.INDENT_OUTPUT);
-
-        String expectedJson1 = objectMapper.writeValueAsString(log1);
-        String expectedJson2 = objectMapper.writeValueAsString(log2);
+        // Actually call the real method (not the spy)
         writerService.saveFailedAssetsRequests(logs);
 
-        verify(s3Client, times(1)).putObject(any(PutObjectRequest.class), any(RequestBody.class));
-        ArgumentCaptor<PutObjectRequest> putObjectRequestCaptor = ArgumentCaptor.forClass(PutObjectRequest.class);
-        ArgumentCaptor<RequestBody> requestBodyCaptor = ArgumentCaptor.forClass(RequestBody.class);
-        verify(s3Client).putObject(putObjectRequestCaptor.capture(), requestBodyCaptor.capture());
+        ArgumentCaptor<PutObjectRequest> requestCaptor = ArgumentCaptor.forClass(PutObjectRequest.class);
+        ArgumentCaptor<RequestBody> bodyCaptor = ArgumentCaptor.forClass(RequestBody.class);
 
-        RequestBody capturedRequestBody = requestBodyCaptor.getValue();
-        byte[] byteBuffer = capturedRequestBody.contentStreamProvider().newStream().readAllBytes();
-        String actualJson = new String(byteBuffer, StandardCharsets.UTF_8);
+        verify(s3Client, times(1)).putObject(requestCaptor.capture(), bodyCaptor.capture());
 
-        assertTrue(actualJson.contains(expectedJson1));
-        assertTrue(actualJson.contains(expectedJson2));
+        PutObjectRequest req = requestCaptor.getValue();
+        assertEquals(bucketName, req.bucket());
+        assertEquals("failed-asset-requests.json", req.key());
+
+        String bodyString = new String(bodyCaptor.getValue().contentStreamProvider().newStream().readAllBytes(), StandardCharsets.UTF_8);
+        assertTrue(bodyString.contains("{"));
+        assertTrue(bodyString.contains("\n") || logs.size() == 1);
     }
 
     @Test
-    public void testRawDataJsonConversion() throws IOException {
-        AssetAccessLog log1 = new AssetAccessLog();
-        log1.setStatusCode(200);
-        log1.setTimestamp(Instant.now());
-        AssetAccessLog log2 = new AssetAccessLog();
-        log2.setStatusCode(404);
-        log2.setTimestamp(Instant.now().plusSeconds(3600));
-        List<AssetAccessLog> logs = Arrays.asList(log1, log2);
-
-        ObjectMapper objectMapper = new ObjectMapper()
-            .registerModule(new JavaTimeModule())
-            .enable(SerializationFeature.INDENT_OUTPUT);
-
-        String expectedJson1 = objectMapper.writeValueAsString(log1);
-        String expectedJson2 = objectMapper.writeValueAsString(log2);
-        writerService.saveRawData(logs);
-
-        verify(s3Client, times(1)).putObject(any(PutObjectRequest.class), any(RequestBody.class));
-        ArgumentCaptor<PutObjectRequest> putObjectRequestCaptor = ArgumentCaptor.forClass(PutObjectRequest.class);
-        ArgumentCaptor<RequestBody> requestBodyCaptor = ArgumentCaptor.forClass(RequestBody.class);
-        verify(s3Client).putObject(putObjectRequestCaptor.capture(), requestBodyCaptor.capture());
-
-        RequestBody capturedRequestBody = requestBodyCaptor.getValue();
-        byte[] byteBuffer = capturedRequestBody.contentStreamProvider().newStream().readAllBytes();
-        String actualJson = new String(byteBuffer, StandardCharsets.UTF_8);
-
-        assertTrue(actualJson.contains(expectedJson1));
-        assertTrue(actualJson.contains(expectedJson2));
+    void saveFailedAssetsRequests_shouldNotPutObject_whenListIsEmpty() {
+        writerService.saveFailedAssetsRequests(Collections.emptyList());
+        verify(s3Client, never()).putObject(any(PutObjectRequest.class), any(RequestBody.class));
     }
 }

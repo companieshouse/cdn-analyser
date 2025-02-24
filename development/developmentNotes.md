@@ -20,10 +20,11 @@ When prompted use these values:
   brew install localstack aws-sam-cli
   export LOCALSTACK_ENDPOINT=http://localhost:4566
   localstack start -d
-  aws --endpoint-url=$LOCALSTACK_ENDPOINT s3 mb s3://cdn-assets
-  aws --endpoint-url=$LOCALSTACK_ENDPOINT s3 sync mock-assets-folder s3://cdn-assets
-  aws --endpoint-url=$LOCALSTACK_ENDPOINT s3 mb s3://cdn-access-logs
-  aws --endpoint-url=$LOCALSTACK_ENDPOINT s3 sync cdn-access-logs s3://cdn-access-logs
+  aws --endpoint-url=$LOCALSTACK_ENDPOINT s3 mb s3://cdn-assets; sleep 1
+  aws --endpoint-url=$LOCALSTACK_ENDPOINT s3 mb s3://cdn-access-logs ; sleep 1
+  aws --endpoint-url=$LOCALSTACK_ENDPOINT s3 mb s3://cdn-analysis-logs ; sleep 1
+  aws --endpoint-url=$LOCALSTACK_ENDPOINT s3 sync src/test/resources/mock-assets-folder s3://cdn-assets; sleep 1
+  aws --endpoint-url=$LOCALSTACK_ENDPOINT s3 sync src/test/resources/cdn-access-logs s3://cdn-access-logs
 ```
 
 ## Create required Docker network to join
@@ -35,5 +36,6 @@ docker network connect lambda-local localstack-main
 ## Running
 The command below needs to be run from this folder
 ```
+sam build
 sam local invoke cdn_analyser -e properties.json --docker-network lambda-local
 ```

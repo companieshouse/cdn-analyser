@@ -1,6 +1,12 @@
 # CDN Analyser
 
-The purpose of the `CDN Analyser` is to analyse the asset requests made to the CDN from web applications. The `CDN Analyser` will run as an AWS Lambda and will run periodically, the lambda can also be triggered manually if required.
+The `CDN Analyser` will:
+  - Analyse the asset requests made to the CDN from web applications.
+  - Parse the log files stored in an S3 bucket, identifying all the requests made.
+  - Produce a list of assets that have not been accessed.
+  - Produce a table showing the number of times an asset has been requested
+  - Optionally if provided, will combine the table of asset requests from a previous run
+  - Be run as an AWS Lambda and will be triggered manually.
 
 ## Useful Diagrams
 
@@ -26,10 +32,9 @@ In order to run this App locally you will need to install:
 | aws.s3.path-style-access                 | true                        | Required for local dev use only                     |
 | cdn.access.logs.bucket                   | cdn-access-logs             |                                                     |
 | cdn.access.logs.filterinpath             | cidev                       |                                                     |
-| cdn.access.logs.processlogsfromtodayonly | TRUE                        |                                                     |
+| cdn.access.logs.previousreport           | file-1.csv                  |                                                     |
 | cdn.assets.bucket                        | cdn-assets                  |                                                     |
 | cdn.assets.filterinpath                  | cidev                       |                                                     |
-| cdn.analysis.data.retention              | 365                         |                                                     |
 
 
 ## Terraform deployment

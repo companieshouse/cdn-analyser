@@ -11,7 +11,7 @@ public class AssetUsageReport {
 
     private String id;
 
-    private Map<String, Integer> assetAccessCount;
+    private Map<String, Integer> assetAccessCount = new HashMap<>();
 
     public AssetUsageReport(String id, Map<String, Integer>  assetAccessCount) {
         this.id = id;
@@ -39,7 +39,7 @@ public class AssetUsageReport {
         return assetAccessCount;
     }
 
-    public void setAssetAccessCount(HashMap<String, Integer> assetAccessCount) {
+    public void setAssetAccessCount(Map<String, Integer> assetAccessCount) {
         this.assetAccessCount = assetAccessCount;
     }
 
