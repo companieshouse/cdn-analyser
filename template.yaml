@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: Example function as lambda deployment
+
+
+Resources:
+
+  CDNAccessLogsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+          BucketName: cdn-access-logs
+          AccessControl: PublicRead
+
+  S3LambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: processRequest
+      Handler: org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest
+      Runtime: java17
+      SnapStart:
+        ApplyOn: PublishedVersions
+      CodeUri: .
+      MemorySize: 1024
+      Policies: AWSLambdaBasicExecutionRole
+      Timeout: 30000
+      Environment:
+        Variables:
+          MAIN_CLASS: uk.gov.companieshouse.cdnanalyser.CdnAnalyserApplication
+    Policies:
+      - S3CrudPolicy:
+        BucketName: !Ref CDNAccessLogsBucket
+    Events:
+      S3Event:
+        Type: S3
+        Properties:
+          Bucket: !Ref CdnAccessLogsBucket
+          Events: s3:ObjectCreated:*

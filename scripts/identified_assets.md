@@ -1,0 +1,72 @@
+| Repository | File Path | Line Number | Line | Asset Name |
+| --- | --- | --- | --- | --- |
+| ch.gov.uk | templates/base.tx | 47 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/vendor/require.js&#039;&gt;&lt;/script&gt; | require.js |
+| ch.gov.uk | templates/base.tx | 48 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/app/accounts-pdf.js&#039;&gt;&lt;/script&gt; | accounts-pdf.js |
+| ch.gov.uk | templates/base.tx | 49 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/lib/details-polyfill.js&#039;&gt;&lt;/script&gt; | details-polyfill.js |
+| ch.gov.uk | templates/base.tx | 50 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/app/generate-document.js&#039;&gt;&lt;/script&gt; | generate-document.js |
+| ch.gov.uk | templates/base.tx | 51 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/app/update-filing-history-link.js&#039;&gt;&lt;/script&gt; | update-filing-history-link.js |
+| ch.gov.uk | templates/base.tx | 52 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/vendor/jquery-1.12.4.min.js&#039;&gt;&lt;/script&gt; | jquery-1.12.4.min.js |
+| certificates.orders.web.ch.gov.uk | src/views/layout.html | 30 | &lt;script src=&quot;https://code.jquery.com/jquery-1.12.4.min.js&quot; | jquery-1.12.4.min.js |
+| certificates.orders.web.ch.gov.uk | src/views/layout.html | 93 | &lt;script src=&quot;//{{CDN_URL}}/javascripts/app/piwik-enable.js&quot;&gt;&lt;/script&gt; | piwik-enable.js |
+| certificates.orders.web.ch.gov.uk | src/views/layout.html | 94 | &lt;script src=&quot;//{{CDN_URL}}/javascripts/app/cookie-consent/cookie-consent-1.0.0.js&quot;&gt;&lt;/script&gt; | cookie-consent-1.0.0.js |
+| certificates.orders.web.ch.gov.uk | src/views/layout.html | 95 | &lt;script src=&quot;//{{CDN_URL}}/javascripts/app/cookie-consent/piwik-only-cookie-consent.js&quot;&gt;&lt;/script&gt; | piwik-only-cookie-consent.js |
+| search.web.ch.gov.uk | src/views/base.html | 24 | &lt;script src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js&quot;&gt;&lt;/script&gt; | jquery.min.js |
+| search.web.ch.gov.uk | src/views/base.html | 93 | &lt;script src=&quot;//{{CDN_URL}}/javascripts/vendor/require.js&quot;&gt;&lt;/script&gt; | require.js |
+| search.web.ch.gov.uk | src/views/base.html | 99 | &lt;script src=&quot;//{{CDN_URL}}/javascripts/app/piwik-enable.js&quot;&gt;&lt;/script&gt; | piwik-enable.js |
+| search.web.ch.gov.uk | src/views/base.html | 100 | &lt;script src=&quot;//{{CDN_URL}}/javascripts/app/cookie-consent/cookie-consent-1.0.0.js&quot;&gt;&lt;/script&gt; | cookie-consent-1.0.0.js |
+| search.web.ch.gov.uk | src/views/base.html | 101 | &lt;script src=&quot;//{{CDN_URL}}/javascripts/app/cookie-consent/piwik-only-cookie-consent.js&quot;&gt;&lt;/script&gt; | piwik-only-cookie-consent.js |
+| search.web.ch.gov.uk | src/views/base.html | 102 | &lt;script src=&quot;//{{CDN_URL}}/javascripts/app/js-enable.js&quot;&gt;&lt;/script&gt; | js-enable.js |
+| search.web.ch.gov.uk | src/views/base.html | 103 | &lt;script src=&quot;//{{CDN_URL}}/javascripts/app/generate-document.js&quot;&gt;&lt;/script&gt; | generate-document.js |
+| search.web.ch.gov.uk | src/views/base.html | 104 | &lt;script src=&quot;//{{CDN_URL}}/javascripts/vendor/jquery-1.12.4.min.js&quot;&gt;&lt;/script&gt; | jquery-1.12.4.min.js |
+| ch.gov.uk | templates/company/filing_history/view.html.tx | 45 | &lt;script src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js&quot;&gt;&lt;/script&gt; | jquery.min.js |
+| ch.gov.uk | templates/company/filing_history/view.html.tx | 46 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/vendor/selection-buttons.js&#039;&gt;&lt;/script&gt; &lt;!-- Needed for new GDS-style radio buttons and checkboxes --&gt; | selection-buttons.js |
+| ch.gov.uk | templates/company/filing_history/view.html.tx | 47 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/vendor/application.js&#039;&gt;&lt;/script&gt;  &lt;!-- Needed for new GDS-style radio buttons and checkboxes --&gt; | application.js |
+| ch.gov.uk | templates/company/officers/list.html.tx | 3 | &lt;script src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js&quot;&gt;&lt;/script&gt; | jquery.min.js |
+| ch.gov.uk | templates/company/officers/list.html.tx | 4 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/vendor/selection-buttons.js&#039;&gt;&lt;/script&gt; &lt;!-- Needed for new GDS-style radio buttons and checkboxes--&gt; | selection-buttons.js |
+| ch.gov.uk | templates/company/officers/list.html.tx | 5 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/vendor/application.js&#039;&gt;&lt;/script&gt; &lt;!-- Needed for new GDS-style radio buttons and checkboxes--&gt; | application.js |
+| ch.gov.uk | templates/personal_appointments/get.html.tx | 3 | &lt;script src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js&quot;&gt;&lt;/script&gt; | jquery.min.js |
+| ch.gov.uk | templates/personal_appointments/get.html.tx | 4 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/vendor/selection-buttons.js&#039;&gt;&lt;/script&gt; &lt;!-- Needed for new GDS-style radio buttons and checkboxes --&gt; | selection-buttons.js |
+| ch.gov.uk | templates/personal_appointments/get.html.tx | 5 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/vendor/application.js&#039;&gt;&lt;/script&gt;  &lt;!-- Needed for new GDS-style radio buttons and checkboxes --&gt; | application.js |
+| orders.web.ch.gov.uk | src/views/layout.html | 22 | &lt;script src=&quot;https://code.jquery.com/jquery-1.12.4.min.js&quot; | jquery-1.12.4.min.js |
+| orders.web.ch.gov.uk | src/views/layout.html | 85 | &lt;script src=&quot;//{{CDN_URL}}/javascripts/app/piwik-enable.js&quot;&gt;&lt;/script&gt; | piwik-enable.js |
+| orders.web.ch.gov.uk | src/views/layout.html | 86 | &lt;script src=&quot;//{{CDN_URL}}/javascripts/app/cookie-consent/cookie-consent-1.0.0.js&quot;&gt;&lt;/script&gt; | cookie-consent-1.0.0.js |
+| orders.web.ch.gov.uk | src/views/layout.html | 87 | &lt;script src=&quot;//{{CDN_URL}}/javascripts/app/cookie-consent/piwik-only-cookie-consent.js&quot;&gt;&lt;/script&gt; | piwik-only-cookie-consent.js |
+| orders.web.ch.gov.uk | src/views/layout.html | 88 | &lt;script src=&quot;//{{CDN_URL}}/javascripts/lib/MobileMenu.js&quot;&gt;&lt;/script&gt; | MobileMenu.js |
+| ch.gov.uk | templates/company/mortgages/view.html.tx | 4 | &lt;script src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js&quot;&gt;&lt;/script&gt; | jquery.min.js |
+| ch.gov.uk | templates/company/mortgages/view.html.tx | 5 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/vendor/selection-buttons.js&#039;&gt;&lt;/script&gt; &lt;!-- Needed for new GDS-style radio buttons and checkboxes --&gt; | selection-buttons.js |
+| ch.gov.uk | templates/company/mortgages/view.html.tx | 6 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/vendor/application.js&#039;&gt;&lt;/script&gt;  &lt;!-- Needed for new GDS-style radio buttons and checkboxes --&gt; | application.js |
+| ch.gov.uk | templates/company/filing_history/view_certified.html.tx | 45 | &lt;script src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js&quot;&gt;&lt;/script&gt; | jquery.min.js |
+| ch.gov.uk | templates/company/filing_history/view_certified.html.tx | 46 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/vendor/selection-buttons.js&#039;&gt;&lt;/script&gt; &lt;!-- Needed for new GDS-style radio buttons and checkboxes --&gt; | selection-buttons.js |
+| ch.gov.uk | templates/company/filing_history/view_certified.html.tx | 47 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/vendor/application.js&#039;&gt;&lt;/script&gt;  &lt;!-- Needed for new GDS-style radio buttons and checkboxes --&gt; | application.js |
+| ch.gov.uk | templates/includes/expand_links.tx | 1 | &lt;script type=&quot;text/javascript&quot; src=&quot;//&lt;% $cdn_url %&gt;/javascripts/app/transactions/company/filing_history_view.js&quot;&gt;&lt;/script&gt; | filing_history_view.js |
+| ch.gov.uk | templates/company/transactions/change_registered_office_address.html.tx | 3 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/vendor/selection-buttons.js&#039;&gt;&lt;/script&gt; &lt;!-- Needed for new GDS-style radio buttons and checkboxes --&gt; | selection-buttons.js |
+| ch.gov.uk | templates/company/transactions/change_registered_office_address.html.tx | 4 | &lt;script src=&#039;//&lt;% $cdn_url %&gt;/javascripts/vendor/application.js&#039;&gt;&lt;/script&gt;  &lt;!-- Needed for new GDS-style radio buttons and checkboxes --&gt; | application.js |
+| ch.gov.uk | templates/includes/piwik.tx | 3 | &lt;script src=&quot;//&lt;% $cdn_url %&gt;/javascripts/app/cookie-consent/cookie-consent-1.0.0.js&quot;&gt;&lt;/script&gt; | cookie-consent-1.0.0.js |
+| applications.developer.web.ch.gov.uk | server/views/_layouts/default.njk | 22 | &lt;script src=&quot;{{cdnUrlJs}}/../../vendor/jquery-3.3.1.min.js&quot;&gt;&lt;/script&gt; | jquery-3.3.1.min.js |
+| applications.developer.web.ch.gov.uk | server/views/_layouts/default.njk | 58 | &lt;script src=&quot;{{ cdnHost }}/javascripts/app/cookie-consent/cookie-consent-1.0.0.js&quot;&gt;&lt;/script&gt; | cookie-consent-1.0.0.js |
+| applications.developer.web.ch.gov.uk | server/views/_layouts/default.njk | 59 | &lt;script src=&quot;{{ cdnHost }}/javascripts/app/cookie-consent/piwik-only-cookie-consent.js&quot;&gt;&lt;/script&gt; | piwik-only-cookie-consent.js |
+| acsp-manage-users-web | src/views/partials/__footer.njk | 63 | &lt;script src=&quot;{{ cdnHost }}/javascripts/app/piwik-enable.js&quot;&gt;&lt;/script&gt; | piwik-enable.js |
+| acsp-manage-users-web | src/views/partials/__footer.njk | 65 | &lt;script type=&quot;module&quot; src=&quot;{{ cdnUrlJs }}/govuk-frontend.min.js&quot;&gt;&lt;/script&gt; | govuk-frontend.min.js |
+| acsp-manage-users-web | src/views/partials/__footer.njk | 66 | &lt;script src=&quot;{{ cdnHost }}/javascripts/app/cookie-consent/cookie-consent-1.0.0.js&quot;&gt;&lt;/script&gt; | cookie-consent-1.0.0.js |
+| acsp-manage-users-web | src/views/partials/__footer.njk | 67 | &lt;script src=&quot;{{ cdnHost }}/javascripts/app/cookie-consent/matomo-only-cookie-consent.js&quot;&gt;&lt;/script&gt; | matomo-only-cookie-consent.js |
+| acsp-manage-users-web | src/views/partials/__footer.njk | 73 | &lt;script src=&quot;{{ cdnHost }}/javascripts/vendor/jquery-3.5.1.min.js&quot;&gt;&lt;/script&gt; | jquery-3.5.1.min.js |
+| acsp-manage-users-web | src/views/partials/__footer.njk | 74 | &lt;script src=&quot;{{ cdnHost }}/javascripts/lib/navbar.js&quot;&gt;&lt;/script&gt; | navbar.js |
+| applications.developer.web.ch.gov.uk | server/views/_partials/__footer.njk | 60 | &lt;script src=&quot;{{cdnUrlJs}}/application.js&quot;&gt;&lt;/script&gt; | application.js |
+| applications.developer.web.ch.gov.uk | server/views/_partials/__footer.njk | 61 | &lt;!--&lt;script src=&quot;/all.js&quot;&gt;&lt;/script&gt; | all.js |
+| your-companies-web | src/views/partials/__footer.njk | 78 | &lt;script src=&quot;{{ cdnHost }}/javascripts/app/piwik-enable.js&quot;&gt;&lt;/script&gt; | piwik-enable.js |
+| your-companies-web | src/views/partials/__footer.njk | 79 | &lt;script type=&quot;module&quot; src=&quot;{{ cdnUrlJs }}/govuk-frontend.min.js&quot;&gt;&lt;/script&gt; | govuk-frontend.min.js |
+| your-companies-web | src/views/partials/__footer.njk | 80 | &lt;script src=&quot;{{ cdnHost }}/javascripts/app/cookie-consent/cookie-consent-1.0.0.js&quot;&gt;&lt;/script&gt; | cookie-consent-1.0.0.js |
+| your-companies-web | src/views/partials/__footer.njk | 81 | &lt;script src=&quot;{{ cdnHost }}/javascripts/app/cookie-consent/matomo-only-cookie-consent.js&quot;&gt;&lt;/script&gt; | matomo-only-cookie-consent.js |
+| your-companies-web | src/views/partials/__footer.njk | 82 | &lt;script src=&quot;{{ cdnHost }}/javascripts/vendor/jquery-3.5.1.min.js&quot;&gt;&lt;/script&gt; | jquery-3.5.1.min.js |
+| bankrupt-officer-search-web | src/views/layout.html | 30 | &lt;script src=&quot;https://code.jquery.com/jquery-1.12.4.min.js&quot; | jquery-1.12.4.min.js |
+| bankrupt-officer-search-web | src/views/layout.html | 81 | &lt;script src=&quot;//{{CDN_HOST}}/javascripts/govuk-frontend/v3.6.0/govuk-frontend-3.6.0.min.js&quot;&gt;&lt;/script&gt; | govuk-frontend-3.6.0.min.js |
+| bankrupt-officer-search-web | src/views/layout.html | 83 | &lt;script src=&quot;//{{CDN_HOST}}/javascripts/app/piwik-enable.js&quot;&gt;&lt;/script&gt; | piwik-enable.js |
+| services-dashboard-web | views/main.njk | 8 | &lt;script src=&quot;{{basePath}}/js/libs/pako/2.0.4/pako.min.js&quot;&gt;&lt;/script&gt; | pako.min.js |
+| services-dashboard-web | views/main.njk | 9 | &lt;script src=&quot;{{basePath}}/js/common.js&quot;&gt;&lt;/script&gt; | common.js |
+| services-dashboard-web | views/main.njk | 10 | &lt;script type=&quot;module&quot; src=&quot;{{basePath}}/js/main.js&quot;&gt;&lt;/script&gt; | main.js |
+| limited-partnerships-web | src/views/layout.njk | 27 | &lt;script src=&quot;//code.jquery.com/jquery-3.6.0.js&quot; | jquery-3.6.0.js |
+| limited-partnerships-web | src/views/layout.njk | 95 | &lt;script src=&quot;//{{CDN_HOST}}/javascripts/govuk-frontend/v4.6.0/govuk-frontend-4.6.0.min.js&quot;&gt;&lt;/script&gt; | govuk-frontend-4.6.0.min.js |
+| overseas-entities-web | views/layout.html | 36 | &lt;script src=&quot;https://code.jquery.com/jquery-3.6.0.js&quot; | jquery-3.6.0.js |
+| overseas-entities-web | views/layout.html | 97 | &lt;script src=&quot;{{CDN_HOST}}/javascripts/govuk-frontend/v4.6.0/govuk-frontend-4.6.0.min.js&quot;&gt;&lt;/script&gt; | govuk-frontend-4.6.0.min.js |
+| overseas-entities-web | views/update/update-layout.html | 36 | &lt;script src=&quot;https://code.jquery.com/jquery-3.6.0.js&quot; | jquery-3.6.0.js |
+| overseas-entities-web | views/update/update-layout.html | 105 | &lt;script src=&quot;{{ CDN_HOST }}/javascripts/govuk-frontend/v4.6.0/govuk-frontend-4.6.0.min.js&quot; &gt;&lt;/script&gt; | govuk-frontend-4.6.0.min.js |
